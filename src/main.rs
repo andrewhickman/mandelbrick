@@ -5,11 +5,11 @@ use piet::Color;
 use piet_svg::RenderContext as SvgRenderContext;
 use piet_common::Device;
 
-const TILES_X: usize = 32;
-const TILES_Y: usize = 48;
-const MIN_X: f64 = 0.306521830422178796786;
-const MAX_X: f64 = 0.307991219250166194852;
-const MIN_Y: f64 = 0.571058385944206508762;
+const TILES_X: usize = 48;
+const TILES_Y: usize = 32;
+const MIN_X: f64 = -2.31538881281125;
+const MAX_X: f64 = 1.19729198177323;
+const MIN_Y: f64 = -1.13430317325124;
 
 const MAX_ITERATIONS: u16 = 1000;
 
@@ -93,13 +93,13 @@ fn render(ctx: &mut impl piet::RenderContext) {
     let times = escape_times();
     let color_key = dbg!(color_key(&times));
     let color_key = [
-        34,
-        35,
-        38,
-        41,
-        44,
-        50,
-        65,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        1000,
     ];
 
     ctx.fill(Rect::from_origin_size(Point::ZERO, Size::new(TILES_X as f64 * SCALE, TILES_Y as f64 * SCALE)), &BACKGROUND);
