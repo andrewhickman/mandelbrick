@@ -7,9 +7,9 @@ use piet_common::Device;
 
 const TILES_X: usize = 48;
 const TILES_Y: usize = 32;
-const MIN_X: f64 = -0.743696913085937500019;
-const MAX_X: f64 = -0.743587298372395833565;
-const MIN_Y: f64 = 0.131792392513020833476;
+const MIN_X: f64 = -0.743613457645463943413;
+const MAX_X: f64 = -0.743581444315123557878;
+const MIN_Y: f64 = 0.131808581289270188977;
 
 const MAX_ITERATIONS: u16 = 1000;
 
@@ -93,13 +93,13 @@ fn render(ctx: &mut impl piet::RenderContext) {
     let times = escape_times();
     let color_key = dbg!(color_key(&times));
     let color_key = [
-        76,
-        81,
-        87,
-        94,
+        90,
+        91,
+        96,
         99,
-        103,
-        125,
+        107,
+        115,
+        137,
     ];
 
     ctx.fill(Rect::from_origin_size(Point::ZERO, Size::new(TILES_X as f64 * SCALE, TILES_Y as f64 * SCALE)), &BACKGROUND);
