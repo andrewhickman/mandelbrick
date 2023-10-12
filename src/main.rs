@@ -1,27 +1,28 @@
 use std::array;
 
-use kurbo::{Size, Rect, Point, Circle};
+use kurbo::{Size, Rect, Point, Circle, Line};
 use piet::Color;
 use piet_svg::RenderContext as SvgRenderContext;
 use piet_common::Device;
 
 const TILES_X: usize = 48;
 const TILES_Y: usize = 32;
-const MIN_X: f64 = -0.743613457645463943413;
-const MAX_X: f64 = -0.743581444315123557878;
-const MIN_Y: f64 = 0.131808581289270188977;
+const MIN_X: f64 = -2.31538881281125;
+const MAX_X: f64 = 1.19729198177323;
+const MIN_Y: f64 = -1.13430317325124;
 
 const MAX_ITERATIONS: u16 = 1000;
 
 const BACKGROUND: Color = Color::rgb8(56, 56, 56);
-const COLORS: [Color; 8] = [
+const COLORS: [Color; 9] = [
     Color::rgb8(246, 246, 247),
     Color::rgb8(250, 201, 165),
     Color::rgb8(248, 172, 0),
     Color::rgb8(234, 160, 198),
-    Color::rgb8(209, 75, 150),
     Color::rgb8(0, 154, 150),
+    Color::rgb8(209, 75, 150),
     Color::rgb8(0, 98, 174),
+    Color::rgb8(20, 20, 20),
     Color::rgb8(0, 53, 91),
 ];
 const SCALE: f64 = 16.0;
@@ -43,8 +44,8 @@ fn escape_time(x0: f64, y0: f64) -> u16 {
         }
     }
 
-    MAX_ITERATIONS
-    // MAX_ITERATIONS + (((x2 + y2) / 4.0) * u16::MAX as f64) as u16
+    // MAX_ITERATIONS
+    MAX_ITERATIONS + (((x2 + y2) / 4.0) * u16::MAX as f64) as u16
 }
 
 fn escape_times() -> Vec<u16> {
@@ -93,14 +94,19 @@ fn render(ctx: &mut impl piet::RenderContext) {
     let times = escape_times();
     let color_key = dbg!(color_key(&times));
     let color_key = [
-        90,
-        91,
-        96,
-        99,
-        107,
-        115,
-        137,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        MAX_ITERATIONS,
+        1550,
     ];
+
+    for (i, c)in COLORS.iter().enumerate() {
+        println!("{},{}", i + 1, times.iter().filter(|&&t| color(t, &color_key) == *c).count());
+    }
 
     ctx.fill(Rect::from_origin_size(Point::ZERO, Size::new(TILES_X as f64 * SCALE, TILES_Y as f64 * SCALE)), &BACKGROUND);
 
@@ -109,19 +115,27 @@ fn render(ctx: &mut impl piet::RenderContext) {
     let mut idx = 0;
     let mut view_x = radius;
 
-    for _ in 0..TILES_X {
+    for x in 0..TILES_X {
         let mut view_y = TILES_Y as f64 * SCALE - radius;
 
-        for _ in 0..TILES_Y {
+        for y in 0..TILES_Y {
             let escape_time = times[idx];
             let color = color(escape_time, &color_key);
             ctx.fill(Circle::new(Point::new(view_x, view_y), radius), &color);
 
             view_y -= SCALE;
             idx += 1;
+
+            if x == 0 && y != 0 && y % 16 == 0 {
+                ctx.stroke(Line::new(Point::new(0.0, y as f64 * SCALE), Point::new(TILES_X as f64 * SCALE, y as f64 * SCALE)), &Color::BLUE, 4.0);
+            }
         }
 
         view_x += SCALE;
+
+        if x != 0 && x % 16 == 0 {
+            ctx.stroke(Line::new(Point::new(x as f64 * SCALE, 0.0), Point::new(x as f64 * SCALE, TILES_Y as f64 * SCALE)), &Color::BLUE, 4.0);
+        }
     }
 
     ctx.finish().unwrap();
